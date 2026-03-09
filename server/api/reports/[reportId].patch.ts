@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const config = useRuntimeConfig()
-    const response = await $fetch<Report>(`${config.apiBase}/admin/reports/${reportId}`, {
+    const raw = await $fetch<any>(`${config.apiBase}/admin/reports/${reportId}`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${session.token}`,
@@ -46,7 +46,15 @@ export default defineEventHandler(async (event) => {
       body,
     })
 
-    return response
+    const report = raw.report ?? raw
+    return {
+      ...raw,
+      report: {
+        ...report,
+        reporter:     report.reporter     ?? report.Reporter     ?? null,
+        reportedUser: report.reportedUser ?? report.ReportedUser  ?? null,
+      },
+    }
   } catch (error: any) {
     console.error('Erreur mise à jour signalement:', error)
     
