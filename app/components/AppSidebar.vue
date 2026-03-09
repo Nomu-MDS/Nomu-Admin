@@ -42,17 +42,20 @@ function closeMobileMenu() {
 
 <template>
   <aside 
-    class="fixed lg:static inset-y-0 left-0 z-50 bg-[#464640] border-r border-[#5D5D58] flex flex-col transition-all duration-300 ease-in-out shadow-lg lg:shadow-none"
+    class="fixed lg:static inset-y-0 left-0 z-50 bg-sidebar border-r border-white/10 flex flex-col transition-all duration-300 ease-in-out shadow-lg lg:shadow-none"
     :class="[
       collapsed ? 'lg:w-20' : 'lg:w-64',
       mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
     ]"
   >
     <!-- Header / Logo -->
-    <div class="p-6 border-b border-[#5D5D58] bg-[#464640] relative flex flex-col items-center">
+    <div class="p-6 border-b border-white/10 bg-sidebar relative flex flex-col items-center">
       <!-- Top Row: Logo & Toggle -->
       <div class="flex items-center w-full" :class="collapsed ? 'justify-center' : 'justify-between'">
-        <img src="/nomu-logo.svg" alt="Nomu" class="h-10 w-auto flex-shrink-0 invert" />
+        <!-- Logo étendu -->
+        <img v-if="!collapsed" src="/nomu-logo-cream.svg" alt="Nomu" class="h-8 w-auto flex-shrink-0" />
+        <!-- Favicon en mode replié -->
+        <img v-else src="/favicon.ico" alt="Nomu" class="h-8 w-8 flex-shrink-0 object-contain" />
         
         <!-- Toggle Button (Desktop Only) -->
         <button 
@@ -99,7 +102,7 @@ function closeMobileMenu() {
         class="group flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200 relative"
         :class="[
           item.current 
-            ? 'bg-secondary text-background font-bold' 
+            ? 'bg-secondary text-navy font-bold' 
             : 'text-gray-300 hover:bg-white/5 hover:text-white'
         ]"
         :title="collapsed ? item.name : ''"
@@ -107,7 +110,7 @@ function closeMobileMenu() {
         <Icon 
           :name="item.icon" 
           class="w-6 h-6 flex-shrink-0 transition-colors duration-200"
-          :class="item.current ? 'text-background' : 'text-gray-400 group-hover:text-white'"
+          :class="item.current ? 'text-navy' : 'text-gray-400 group-hover:text-white'"
         />
         <span 
           :class="[
@@ -124,7 +127,7 @@ function closeMobileMenu() {
     </nav>
 
     <!-- Footer / Logout -->
-    <div class="p-4 border-t border-[#5D5D58] bg-[#464640]">
+    <div class="p-4 border-t border-white/10 bg-sidebar">
       <button
         @click="logout"
         class="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors group relative"

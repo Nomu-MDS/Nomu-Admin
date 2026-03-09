@@ -8,86 +8,103 @@ const { user } = useUserSession()
 
 const adminCards = [
   {
-    title: 'Administration des Utilisateurs',
-    description: 'Gérez les comptes, rôles et statuts des utilisateurs',
+    label: 'Utilisateurs',
+    description: 'Comptes, rôles et statuts',
     icon: 'heroicons:users',
     to: '/users',
-    color: 'purple',
-    gradient: 'from-purple-500/20 to-purple-600/20',
-    iconBg: 'bg-purple-500/20',
-    iconColor: 'text-purple-400',
-    borderColor: 'border-purple-500/30',
   },
   {
-    title: 'Administration des Intérêts',
-    description: 'Gérez les centres d\'intérêt disponibles sur la plateforme',
+    label: 'Intérêts',
+    description: "Centres d'intérêt de la plateforme",
     icon: 'heroicons:tag',
     to: '/interests',
-    color: 'blue',
-    gradient: 'from-blue-500/20 to-blue-600/20',
-    iconBg: 'bg-blue-500/20',
-    iconColor: 'text-blue-400',
-    borderColor: 'border-blue-500/30',
   },
   {
-    title: 'Gestion des Signalements',
-    description: 'Traitez les signalements et modérations utilisateurs',
+    label: 'Signalements',
+    description: 'Modération et traitements',
     icon: 'heroicons:flag',
     to: '/reports',
-    color: 'red',
-    gradient: 'from-red-500/20 to-red-600/20',
-    iconBg: 'bg-red-500/20',
-    iconColor: 'text-red-400',
-    borderColor: 'border-red-500/30',
   },
 ]
+
+const reindexing = ref(false)
+const reindexResult = ref<{ success: boolean; indexed: number } | null>(null)
+const reindexError = ref<string | null>(null)
+
+async function triggerReindex() {
+  reindexing.value = true
+  reindexResult.value = null
+  reindexError.value = null
+  try {
+    const data = await $fetch<{ success: boolean; indexed: number }>('/api/reindex', { method: 'POST' })
+    reindexResult.value = data
+  } catch {
+    reindexError.value = 'Erreur lors de la réindexation'
+  } finally {
+    reindexing.value = false
+  }
+}
 </script>
 
 <template>
-  <div class="space-y-6">
-    <PageHeader 
-      title="Tableau de bord" 
-      :description="`Bienvenue sur votre espace d'administration, ${user?.name || ''}.`"
-    />
+  <div class="space-y-8">
+    <div>
+      <h1 class="text-2xl font-bold text-navy">Tableau de bord</h1>
+      <p class="text-navy/50 mt-1 text-sm">Bienvenue, {{ user?.name }}</p>
+    </div>
 
-    <!-- Cards d'administration -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <NuxtLink
         v-for="card in adminCards"
         :key="card.to"
         :to="card.to"
-        class="group bg-[#464640] p-6 rounded-xl shadow-sm border border-[#5D5D58] hover:border-secondary/50 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+        class="group flex items-center gap-4 bg-card border border-navy/10 rounded-xl p-5 hover:border-navy/25 hover:bg-navy/5 transition-all duration-200"
       >
-        <div class="flex flex-col h-full">
-          <!-- Icône -->
-          <div class="flex items-start justify-between mb-4">
-            <div :class="['p-3 rounded-lg', card.iconBg, card.borderColor, 'border-2']">
-              <Icon :name="card.icon" :class="['w-8 h-8', card.iconColor]" />
-            </div>
-            <Icon 
-              name="heroicons:arrow-right" 
-              class="w-5 h-5 text-gray-400 group-hover:text-secondary group-hover:translate-x-1 transition-all duration-300" 
-            />
-          </div>
+        <div class="p-3 rounded-lg bg-navy/5 border border-navy/10 shrink-0">
+          <Icon :name="card.icon" class="w-6 h-6 text-navy" />
+        </div>
+        <div class="min-w-0">
+          <p class="font-semibold text-navy text-sm">{{ card.label }}</p>
+          <p class="text-navy/40 text-xs mt-0.5 truncate">{{ card.description }}</p>
+        </div>
+        <Icon name="heroicons:chevron-right" class="w-4 h-4 text-navy/20 group-hover:text-navy/60 ml-auto transition-colors shrink-0" />
+      </NuxtLink>
+    </div>
 
-          <!-- Contenu -->
-          <div class="flex-1">
-            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-secondary transition-colors">
-              {{ card.title }}
-            </h3>
-            <p class="text-sm text-gray-400 leading-relaxed">
-              {{ card.description }}
-            </p>
+    <!-- Section maintenance -->
+    <div>
+      <h2 class="text-sm font-semibold text-navy/50 uppercase tracking-wider mb-3">Maintenance</h2>
+      <div class="bg-card border border-navy/10 rounded-xl p-5 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="p-3 rounded-lg bg-navy/5 border border-navy/10 shrink-0">
+            <Icon name="heroicons:magnifying-glass" class="w-6 h-6 text-navy" />
           </div>
-
-          <!-- Footer -->
-          <div class="mt-4 pt-4 border-t border-[#5D5D58]">
-            <span class="text-xs text-gray-500 group-hover:text-secondary/70 transition-colors font-medium uppercase tracking-wider">
-              Accéder →
-            </span>
+          <div>
+            <p class="font-semibold text-navy text-sm">Réindexation Meilisearch</p>
+            <p class="text-navy/40 text-xs mt-0.5">Reconstruire l'index de recherche depuis la base de données</p>
           </div>
         </div>
-      </NuxtLink>
+        <div class="flex items-center gap-3 shrink-0">
+          <span v-if="reindexResult" class="text-xs text-green-600 font-medium">
+            ✓ {{ reindexResult.indexed }} profils indexés
+          </span>
+          <span v-if="reindexError" class="text-xs text-red-500 font-medium">
+            {{ reindexError }}
+          </span>
+          <button
+            :disabled="reindexing"
+            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-navy text-white text-sm font-medium hover:bg-navy/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            @click="triggerReindex"
+          >
+            <Icon
+              :name="reindexing ? 'heroicons:arrow-path' : 'heroicons:arrow-path'"
+              class="w-4 h-4"
+              :class="{ 'animate-spin': reindexing }"
+            />
+            {{ reindexing ? 'Réindexation…' : 'Lancer la réindexation' }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>

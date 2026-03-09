@@ -8,7 +8,7 @@ function toggleMobileMenu() {
 </script>
 
 <template>
-  <div class="h-screen flex bg-background overflow-hidden font-sans text-white">
+  <div class="h-screen flex bg-background overflow-hidden font-sans text-navy">
     
     <!-- Mobile Overlay -->
     <div 
@@ -25,9 +25,9 @@ function toggleMobileMenu() {
     />
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-background">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-background text-navy">
       <!-- Mobile Header -->
-      <header class="bg-[#464640] border-b border-[#5D5D58] lg:hidden h-16 flex items-center px-4 justify-between">
+      <header class="bg-sidebar border-b border-white/10 lg:hidden h-16 flex items-center px-4 justify-between">
         <button @click="toggleMobileMenu" class="text-white hover:bg-white/10 p-2 rounded-lg -ml-2">
           <Icon name="heroicons:bars-3" class="w-6 h-6" />
         </button>
@@ -37,7 +37,7 @@ function toggleMobileMenu() {
 
       <!-- Page Content -->
       <main class="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
-        <div class="max-w-7xl mx-auto h-full text-white"> 
+        <div class="max-w-7xl mx-auto h-full">
            <slot />
         </div>
       </main>
