@@ -186,7 +186,7 @@ onMounted(() => {
     <div class="flex justify-end">
       <button
         @click="openCreateModal"
-        class="bg-[#D4B08C] hover:bg-[#C5A07D] text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+        class="bg-navy hover:bg-navy/80 text-navy px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 text-white"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -196,35 +196,35 @@ onMounted(() => {
     </div>
     
     <!-- Liste des intérêts -->
-    <div class="bg-[#464640] rounded-xl shadow-sm border border-[#5D5D58]">
-      <div v-if="loading && interests.length === 0" class="p-8 text-center text-gray-400">
+    <div class="bg-card rounded-xl shadow-sm border border-navy/15">
+      <div v-if="loading && interests.length === 0" class="p-8 text-center text-navy/50">
         Chargement...
       </div>
       
-      <div v-else-if="interests.length === 0" class="p-8 text-center text-gray-400">
+      <div v-else-if="interests.length === 0" class="p-8 text-center text-navy/50">
         Aucun intérêt trouvé. Commencez par en créer un.
       </div>
       
       <div v-else class="overflow-x-auto">
         <table class="w-full">
           <thead>
-            <tr class="border-b border-[#5D5D58]">
-              <th class="text-left p-4 text-gray-300 font-medium">Nom</th>
-              <th class="text-left p-4 text-gray-300 font-medium">Icône</th>
-              <th class="text-left p-4 text-gray-300 font-medium">Statut</th>
-              <th class="text-right p-4 text-gray-300 font-medium">Actions</th>
+            <tr class="border-b border-navy/15">
+              <th class="text-left p-4 text-navy/60 font-medium">Nom</th>
+              <th class="text-left p-4 text-navy/60 font-medium">Icône</th>
+              <th class="text-left p-4 text-navy/60 font-medium">Statut</th>
+              <th class="text-right p-4 text-navy/60 font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr 
               v-for="interest in interests" 
               :key="interest.id"
-              class="border-b border-[#5D5D58] hover:bg-[#3E3E39] transition-colors"
+              class="border-b border-navy/15 hover:bg-white transition-colors"
             >
-              <td class="p-4 text-white">{{ interest.name }}</td>
-              <td class="p-4 text-white">
+              <td class="p-4 text-navy">{{ interest.name }}</td>
+              <td class="p-4 text-navy">
                 <span v-if="interest.icon" class="text-2xl">{{ interest.icon }}</span>
-                <span v-else class="text-gray-500 text-sm">-</span>
+                <span v-else class="text-navy/40 text-sm">-</span>
               </td>
               <td class="p-4">
                 <span
@@ -232,7 +232,7 @@ onMounted(() => {
                     'px-3 py-1 rounded-full text-xs font-medium',
                     interest.is_active 
                       ? 'bg-green-500/20 text-green-400' 
-                      : 'bg-gray-500/20 text-gray-400'
+                      : 'bg-gray-500/20 text-navy/50'
                   ]"
                 >
                   {{ interest.is_active ? 'Actif' : 'Inactif' }}
@@ -242,7 +242,7 @@ onMounted(() => {
                 <div class="flex items-center justify-end gap-2">
                   <button
                     @click="openEditModal(interest)"
-                    class="p-2 hover:bg-[#5D5D58] rounded-lg transition-colors text-blue-400"
+                    class="p-2 hover:bg-navy/10 rounded-lg transition-colors text-blue-400"
                     title="Modifier"
                   >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -251,7 +251,7 @@ onMounted(() => {
                   </button>
                   <button
                     @click="deleteInterest(interest)"
-                    class="p-2 hover:bg-[#5D5D58] rounded-lg transition-colors text-red-400"
+                    class="p-2 hover:bg-navy/10 rounded-lg transition-colors text-red-400"
                     title="Supprimer"
                   >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -269,11 +269,11 @@ onMounted(() => {
     <!-- Modal Créer/Éditer -->
     <div 
       v-if="showModal"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      class="fixed inset-0 bg-navy/50 flex items-center justify-center z-50 p-4"
       @click.self="showModal = false"
     >
-      <div class="bg-[#464640] rounded-xl border border-[#5D5D58] p-6 w-full max-w-md">
-        <h3 class="text-xl font-semibold text-white mb-4">
+      <div class="bg-card rounded-xl border border-navy/15 p-6 w-full max-w-md">
+        <h3 class="text-xl font-semibold text-navy mb-4">
           {{ editingInterest ? 'Modifier l\'intérêt' : 'Créer un intérêt' }}
         </h3>
         
@@ -283,22 +283,22 @@ onMounted(() => {
         
         <form @submit.prevent="saveInterest" class="space-y-4">
           <div>
-            <label class="block text-gray-300 mb-2 text-sm">Nom *</label>
+            <label class="block text-navy/60 mb-2 text-sm">Nom *</label>
             <input
               v-model="formData.name"
               type="text"
               required
-              class="w-full px-4 py-2 bg-[#3E3E39] border border-[#5D5D58] rounded-lg text-white focus:outline-none focus:border-[#D4B08C]"
+              class="w-full px-4 py-2 bg-white border border-navy/15 rounded-lg text-navy focus:outline-none focus:border-navy"
               placeholder="Ex: Sport, Musique, Cuisine..."
             />
           </div>
           
           <div>
-            <label class="block text-gray-300 mb-2 text-sm">Icône (emoji)</label>
+            <label class="block text-navy/60 mb-2 text-sm">Icône (emoji)</label>
             <input
               v-model="formData.icon"
               type="text"
-              class="w-full px-4 py-2 bg-[#3E3E39] border border-[#5D5D58] rounded-lg text-white focus:outline-none focus:border-[#D4B08C]"
+              class="w-full px-4 py-2 bg-white border border-navy/15 rounded-lg text-navy focus:outline-none focus:border-navy"
               placeholder="Ex: ⚽ 🎵 🍳"
             />
           </div>
@@ -308,23 +308,23 @@ onMounted(() => {
               v-model="formData.is_active"
               type="checkbox"
               id="is_active"
-              class="w-4 h-4 rounded border-[#5D5D58] bg-[#3E3E39] text-[#D4B08C] focus:ring-[#D4B08C]"
+              class="w-4 h-4 rounded border-navy/15 bg-white text-navy focus:ring-[#D4B08C]"
             />
-            <label for="is_active" class="text-gray-300 text-sm">Actif</label>
+            <label for="is_active" class="text-navy/60 text-sm">Actif</label>
           </div>
           
           <div class="flex gap-3 pt-4">
             <button
               type="button"
               @click="showModal = false"
-              class="flex-1 px-4 py-2 bg-[#3E3E39] hover:bg-[#5D5D58] text-white rounded-lg transition-colors"
+              class="flex-1 px-4 py-2 bg-white hover:bg-navy/10 text-navy rounded-lg transition-colors"
             >
               Annuler
             </button>
             <button
               type="submit"
               :disabled="loading"
-              class="flex-1 px-4 py-2 bg-[#D4B08C] hover:bg-[#C5A07D] text-white rounded-lg transition-colors disabled:opacity-50"
+              class="flex-1 px-4 py-2 bg-navy hover:bg-navy/80 text-navy rounded-lg transition-colors disabled:opacity-50"
             >
               {{ loading ? 'Enregistrement...' : 'Enregistrer' }}
             </button>

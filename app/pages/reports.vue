@@ -144,9 +144,9 @@ function getStatusBadgeClass(status: ReportStatus) {
     case 'resolved':
       return 'bg-green-500/20 text-green-300 border-green-500/30'
     case 'dismissed':
-      return 'bg-gray-500/20 text-gray-300 border-gray-500/30'
+      return 'bg-gray-500/20 text-navy/60 border-gray-500/30'
     default:
-      return 'bg-gray-500/20 text-gray-300 border-gray-500/30'
+      return 'bg-gray-500/20 text-navy/60 border-gray-500/30'
   }
 }
 
@@ -162,8 +162,12 @@ function getStatusLabel(status: ReportStatus) {
 }
 
 // Format date
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('fr-FR', {
+function formatDate(date: string | null | undefined) {
+  if (!date) return '-'
+  const normalized = date.replace(' ', 'T').replace(/\+00$/, '+00:00')
+  const d = new Date(normalized)
+  if (isNaN(d.getTime())) return '-'
+  return d.toLocaleDateString('fr-FR', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -188,60 +192,60 @@ onMounted(() => {
 
     <!-- Statistiques -->
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-      <div class="bg-[#464640] p-4 rounded-xl shadow-sm border border-[#5D5D58]">
+      <div class="bg-card p-4 rounded-xl shadow-sm border border-navy/15">
         <div class="flex items-center justify-between mb-2">
-          <h3 class="text-gray-400 font-medium text-xs uppercase">Total</h3>
-          <Icon name="heroicons:flag" class="w-5 h-5 text-gray-400" />
+          <h3 class="text-navy/50 font-medium text-xs uppercase">Total</h3>
+          <Icon name="heroicons:flag" class="w-5 h-5 text-navy/50" />
         </div>
-        <div v-if="loadingStats" class="text-xl font-bold text-white">-</div>
-        <div v-else class="text-2xl font-bold text-white">{{ stats?.total || 0 }}</div>
+        <div v-if="loadingStats" class="text-xl font-bold text-navy">-</div>
+        <div v-else class="text-2xl font-bold text-navy">{{ stats?.total || 0 }}</div>
       </div>
 
-      <div class="bg-[#464640] p-4 rounded-xl shadow-sm border border-yellow-500/30">
+      <div class="bg-card p-4 rounded-xl shadow-sm border border-yellow-500/30">
         <div class="flex items-center justify-between mb-2">
           <h3 class="text-yellow-400 font-medium text-xs uppercase">En attente</h3>
           <Icon name="heroicons:clock" class="w-5 h-5 text-yellow-400" />
         </div>
-        <div v-if="loadingStats" class="text-xl font-bold text-white">-</div>
+        <div v-if="loadingStats" class="text-xl font-bold text-navy">-</div>
         <div v-else class="text-2xl font-bold text-yellow-300">{{ stats?.pending || 0 }}</div>
       </div>
 
-      <div class="bg-[#464640] p-4 rounded-xl shadow-sm border border-blue-500/30">
+      <div class="bg-card p-4 rounded-xl shadow-sm border border-blue-500/30">
         <div class="flex items-center justify-between mb-2">
           <h3 class="text-blue-400 font-medium text-xs uppercase">Examinés</h3>
           <Icon name="heroicons:eye" class="w-5 h-5 text-blue-400" />
         </div>
-        <div v-if="loadingStats" class="text-xl font-bold text-white">-</div>
+        <div v-if="loadingStats" class="text-xl font-bold text-navy">-</div>
         <div v-else class="text-2xl font-bold text-blue-300">{{ stats?.reviewed || 0 }}</div>
       </div>
 
-      <div class="bg-[#464640] p-4 rounded-xl shadow-sm border border-green-500/30">
+      <div class="bg-card p-4 rounded-xl shadow-sm border border-green-500/30">
         <div class="flex items-center justify-between mb-2">
           <h3 class="text-green-400 font-medium text-xs uppercase">Résolus</h3>
           <Icon name="heroicons:check-circle" class="w-5 h-5 text-green-400" />
         </div>
-        <div v-if="loadingStats" class="text-xl font-bold text-white">-</div>
+        <div v-if="loadingStats" class="text-xl font-bold text-navy">-</div>
         <div v-else class="text-2xl font-bold text-green-300">{{ stats?.resolved || 0 }}</div>
       </div>
 
-      <div class="bg-[#464640] p-4 rounded-xl shadow-sm border border-gray-500/30">
+      <div class="bg-card p-4 rounded-xl shadow-sm border border-gray-500/30">
         <div class="flex items-center justify-between mb-2">
-          <h3 class="text-gray-400 font-medium text-xs uppercase">Rejetés</h3>
-          <Icon name="heroicons:x-circle" class="w-5 h-5 text-gray-400" />
+          <h3 class="text-navy/50 font-medium text-xs uppercase">Rejetés</h3>
+          <Icon name="heroicons:x-circle" class="w-5 h-5 text-navy/50" />
         </div>
-        <div v-if="loadingStats" class="text-xl font-bold text-white">-</div>
-        <div v-else class="text-2xl font-bold text-gray-300">{{ stats?.dismissed || 0 }}</div>
+        <div v-if="loadingStats" class="text-xl font-bold text-navy">-</div>
+        <div v-else class="text-2xl font-bold text-navy/60">{{ stats?.dismissed || 0 }}</div>
       </div>
     </div>
 
     <!-- Filtres -->
-    <div class="bg-[#464640] rounded-xl shadow-sm border border-[#5D5D58] p-6">
+    <div class="bg-card rounded-xl shadow-sm border border-navy/15 p-6">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-300 mb-2">Statut</label>
+          <label class="block text-sm font-medium text-navy/60 mb-2">Statut</label>
           <select
             v-model="filters.status"
-            class="w-full px-4 py-2 bg-background border border-[#5D5D58] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-secondary"
+            class="w-full px-4 py-2 bg-card border border-navy/15 rounded-lg text-navy focus:outline-none focus:ring-2 focus:ring-navy/30"
           >
             <option value="">Tous</option>
             <option value="pending">En attente</option>
@@ -255,14 +259,14 @@ onMounted(() => {
       <div class="flex gap-3 mt-4">
         <button
           @click="applyFilters"
-          class="px-4 py-2 bg-secondary text-background font-medium rounded-lg hover:bg-secondary/90 transition-colors"
+          class="px-4 py-2 bg-navy text-cream font-medium rounded-lg hover:bg-navy/90 transition-colors"
         >
           <Icon name="heroicons:funnel" class="w-4 h-4 inline mr-2" />
           Filtrer
         </button>
         <button
           @click="resetFilters"
-          class="px-4 py-2 bg-white/10 text-white font-medium rounded-lg hover:bg-white/20 transition-colors"
+          class="px-4 py-2 bg-navy/10 text-navy font-medium rounded-lg hover:bg-navy/20 transition-colors"
         >
           <Icon name="heroicons:x-mark" class="w-4 h-4 inline mr-2" />
           Réinitialiser
@@ -276,53 +280,53 @@ onMounted(() => {
     </div>
 
     <!-- Tableau des signalements -->
-    <div class="bg-[#464640] rounded-xl shadow-sm border border-[#5D5D58] overflow-hidden">
+    <div class="bg-card rounded-xl shadow-sm border border-navy/15 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full">
-          <thead class="bg-background border-b border-[#5D5D58]">
+          <thead class="bg-card border-b border-navy/15">
             <tr>
-              <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">ID</th>
-              <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Signalé par</th>
-              <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Utilisateur signalé</th>
-              <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Raison</th>
-              <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Statut</th>
-              <th class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
-              <th class="px-6 py-4 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-navy/60 uppercase tracking-wider">ID</th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-navy/60 uppercase tracking-wider">Signalé par</th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-navy/60 uppercase tracking-wider">Utilisateur signalé</th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-navy/60 uppercase tracking-wider">Raison</th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-navy/60 uppercase tracking-wider">Statut</th>
+              <th class="px-6 py-4 text-left text-xs font-medium text-navy/60 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-4 text-right text-xs font-medium text-navy/60 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-[#5D5D58]">
+          <tbody class="divide-y divide-navy/15">
             <tr v-if="loading">
-              <td colspan="7" class="px-6 py-12 text-center text-gray-400">
+              <td colspan="7" class="px-6 py-12 text-center text-navy/50">
                 <Icon name="svg-spinners:ring-resize" class="w-8 h-8 mx-auto mb-2" />
                 Chargement...
               </td>
             </tr>
             <tr v-else-if="reports.length === 0">
-              <td colspan="7" class="px-6 py-12 text-center text-gray-400">
+              <td colspan="7" class="px-6 py-12 text-center text-navy/50">
                 Aucun signalement trouvé
               </td>
             </tr>
-            <tr v-else v-for="report in reports" :key="report.id" class="hover:bg-white/5 transition-colors">
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+            <tr v-else v-for="report in reports" :key="report.id" class="hover:bg-navy/5 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-navy/60">
                 #{{ report.id }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-white">{{ report.reporter.name }}</div>
-                <div class="text-xs text-gray-400">{{ report.reporter.email }}</div>
+                <div class="text-sm font-medium text-navy">{{ report.reporter.name }}</div>
+                <div class="text-xs text-navy/50">{{ report.reporter.email }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-white">{{ report.reportedUser.name }}</div>
-                <div class="text-xs text-gray-400">{{ report.reportedUser.email }}</div>
+                <div class="text-sm font-medium text-navy">{{ report.reportedUser.name }}</div>
+                <div class="text-xs text-navy/50">{{ report.reportedUser.email }}</div>
               </td>
               <td class="px-6 py-4 max-w-xs">
-                <div class="text-sm text-gray-300 truncate">{{ report.reason }}</div>
+                <div class="text-sm text-navy/60 truncate">{{ report.reason }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span :class="['px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border', getStatusBadgeClass(report.status)]">
                   {{ getStatusLabel(report.status) }}
                 </span>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-navy/50">
                 {{ formatDate(report.created_at) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -354,8 +358,8 @@ onMounted(() => {
       </div>
 
       <!-- Pagination -->
-      <div v-if="pagination" class="px-6 py-4 bg-background border-t border-[#5D5D58] flex items-center justify-between">
-        <div class="text-sm text-gray-400">
+      <div v-if="pagination" class="px-6 py-4 bg-card border-t border-navy/15 flex items-center justify-between">
+        <div class="text-sm text-navy/50">
           Page {{ pagination.currentPage }} sur {{ pagination.totalPages }} 
           ({{ pagination.totalReports }} signalement{{ pagination.totalReports > 1 ? 's' : '' }})
         </div>
@@ -363,14 +367,14 @@ onMounted(() => {
           <button
             @click="handlePageChange(pagination.currentPage - 1)"
             :disabled="!pagination.hasPrevPage"
-            class="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="px-4 py-2 bg-navy/10 text-navy rounded-lg hover:bg-navy/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <Icon name="heroicons:chevron-left" class="w-4 h-4" />
           </button>
           <button
             @click="handlePageChange(pagination.currentPage + 1)"
             :disabled="!pagination.hasNextPage"
-            class="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="px-4 py-2 bg-navy/10 text-navy rounded-lg hover:bg-navy/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <Icon name="heroicons:chevron-right" class="w-4 h-4" />
           </button>
@@ -381,12 +385,12 @@ onMounted(() => {
     <!-- Modal détails -->
     <div v-if="showDetailsModal && selectedReport" class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="closeModals"></div>
+        <div class="fixed inset-0 bg-navy/50 backdrop-blur-sm" @click="closeModals"></div>
         
-        <div class="relative bg-[#464640] rounded-xl shadow-xl border border-[#5D5D58] p-6 max-w-2xl w-full">
+        <div class="relative bg-card rounded-xl shadow-xl border border-navy/15 p-6 max-w-2xl w-full">
           <div class="flex items-start justify-between mb-6">
-            <h3 class="text-xl font-bold text-white">Détails du signalement #{{ selectedReport.id }}</h3>
-            <button @click="closeModals" class="text-gray-400 hover:text-white">
+            <h3 class="text-xl font-bold text-navy">Détails du signalement #{{ selectedReport.id }}</h3>
+            <button @click="closeModals" class="text-navy/50 hover:text-navy">
               <Icon name="heroicons:x-mark" class="w-6 h-6" />
             </button>
           </div>
@@ -394,34 +398,34 @@ onMounted(() => {
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="text-xs text-gray-400 uppercase">Signalé par</label>
+                <label class="text-xs text-navy/50 uppercase">Signalé par</label>
                 <div class="mt-1">
-                  <p class="text-white font-medium">{{ selectedReport.reporter.name }}</p>
-                  <p class="text-sm text-gray-400">{{ selectedReport.reporter.email }}</p>
+                  <p class="text-navy font-medium">{{ selectedReport.reporter.name }}</p>
+                  <p class="text-sm text-navy/50">{{ selectedReport.reporter.email }}</p>
                 </div>
               </div>
               <div>
-                <label class="text-xs text-gray-400 uppercase">Utilisateur signalé</label>
+                <label class="text-xs text-navy/50 uppercase">Utilisateur signalé</label>
                 <div class="mt-1">
-                  <p class="text-white font-medium">{{ selectedReport.reportedUser.name }}</p>
-                  <p class="text-sm text-gray-400">{{ selectedReport.reportedUser.email }}</p>
+                  <p class="text-navy font-medium">{{ selectedReport.reportedUser.name }}</p>
+                  <p class="text-sm text-navy/50">{{ selectedReport.reportedUser.email }}</p>
                 </div>
               </div>
             </div>
 
             <div>
-              <label class="text-xs text-gray-400 uppercase">Raison</label>
-              <p class="mt-1 text-white">{{ selectedReport.reason }}</p>
+              <label class="text-xs text-navy/50 uppercase">Raison</label>
+              <p class="mt-1 text-navy">{{ selectedReport.reason }}</p>
             </div>
 
             <div v-if="selectedReport.description">
-              <label class="text-xs text-gray-400 uppercase">Description</label>
-              <p class="mt-1 text-white whitespace-pre-wrap">{{ selectedReport.description }}</p>
+              <label class="text-xs text-navy/50 uppercase">Description</label>
+              <p class="mt-1 text-navy whitespace-pre-wrap">{{ selectedReport.description }}</p>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="text-xs text-gray-400 uppercase">Statut</label>
+                <label class="text-xs text-navy/50 uppercase">Statut</label>
                 <div class="mt-1">
                   <span :class="['px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border', getStatusBadgeClass(selectedReport.status)]">
                     {{ getStatusLabel(selectedReport.status) }}
@@ -429,8 +433,8 @@ onMounted(() => {
                 </div>
               </div>
               <div>
-                <label class="text-xs text-gray-400 uppercase">Date de création</label>
-                <p class="mt-1 text-white">{{ formatDate(selectedReport.created_at) }}</p>
+                <label class="text-xs text-navy/50 uppercase">Date de création</label>
+                <p class="mt-1 text-navy">{{ formatDate(selectedReport.created_at) }}</p>
               </div>
             </div>
           </div>
@@ -438,13 +442,13 @@ onMounted(() => {
           <div class="mt-6 flex gap-3">
             <button
               @click="openStatusModal(selectedReport)"
-              class="flex-1 px-4 py-2 bg-secondary text-background font-medium rounded-lg hover:bg-secondary/90 transition-colors"
+              class="flex-1 px-4 py-2 bg-navy text-cream font-medium rounded-lg hover:bg-navy/90 transition-colors"
             >
               Modifier le statut
             </button>
             <button
               @click="closeModals"
-              class="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
+              class="px-4 py-2 bg-navy/10 text-navy rounded-lg hover:bg-navy/20 transition-colors"
             >
               Fermer
             </button>
@@ -456,15 +460,15 @@ onMounted(() => {
     <!-- Modal changement de statut -->
     <div v-if="showStatusModal && selectedReport" class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="closeModals"></div>
+        <div class="fixed inset-0 bg-navy/50 backdrop-blur-sm" @click="closeModals"></div>
         
-        <div class="relative bg-[#464640] rounded-xl shadow-xl border border-[#5D5D58] p-6 max-w-md w-full">
-          <h3 class="text-xl font-bold text-white mb-4">Modifier le statut</h3>
+        <div class="relative bg-card rounded-xl shadow-xl border border-navy/15 p-6 max-w-md w-full">
+          <h3 class="text-xl font-bold text-navy mb-4">Modifier le statut</h3>
           
           <div class="mb-6">
-            <p class="text-gray-300 mb-4">Signalement #{{ selectedReport.id }}</p>
+            <p class="text-navy/60 mb-4">Signalement #{{ selectedReport.id }}</p>
             
-            <label class="block text-sm font-medium text-gray-300 mb-2">Nouveau statut</label>
+            <label class="block text-sm font-medium text-navy/60 mb-2">Nouveau statut</label>
             <div class="space-y-2">
               <button
                 v-for="status in ['pending', 'reviewed', 'resolved', 'dismissed']"
@@ -473,8 +477,8 @@ onMounted(() => {
                 :class="[
                   'w-full px-4 py-3 rounded-lg border-2 transition-all text-left',
                   selectedReport.status === status
-                    ? 'border-secondary bg-secondary/20 text-white'
-                    : 'border-[#5D5D58] bg-background text-gray-300 hover:border-secondary/50'
+                    ? 'border-secondary bg-navy/10 text-navy'
+                    : 'border-navy/15 bg-card text-navy/60 hover:border-secondary/50'
                 ]"
               >
                 <div class="flex items-center justify-between">
@@ -487,7 +491,7 @@ onMounted(() => {
 
           <button
             @click="closeModals"
-            class="w-full px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
+            class="w-full px-4 py-2 bg-navy/10 text-navy rounded-lg hover:bg-navy/20 transition-colors"
           >
             Annuler
           </button>

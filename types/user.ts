@@ -2,6 +2,7 @@ export interface UserProfile {
   id: number
   is_searchable: boolean
   biography: string | null
+  image_url: string | null
   country?: string
   city?: string
   created_at?: string
@@ -26,7 +27,6 @@ export interface User {
   created_at: string
   updated_at: string
   Profile: UserProfile
-  Wallet: UserWallet
 }
 
 export interface PaginationInfo {
