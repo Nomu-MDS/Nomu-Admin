@@ -13,8 +13,8 @@ export interface Report {
   status: ReportStatus
   created_at: string
   updated_at: string
-  reporter: ReportUser
-  reportedUser: ReportUser
+  reporter: ReportUser | null
+  reportedUser: ReportUser | null
 }
 
 export interface ReportStats {

@@ -138,15 +138,15 @@ async function deleteReport(reportId: number) {
 function getStatusBadgeClass(status: ReportStatus) {
   switch (status) {
     case 'pending':
-      return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
+      return 'bg-amber-100 text-amber-700 border-amber-300'
     case 'reviewed':
-      return 'bg-blue-500/20 text-blue-300 border-blue-500/30'
+      return 'bg-blue-100 text-blue-700 border-blue-300'
     case 'resolved':
-      return 'bg-green-500/20 text-green-300 border-green-500/30'
+      return 'bg-emerald-100 text-emerald-700 border-emerald-300'
     case 'dismissed':
-      return 'bg-gray-500/20 text-navy/60 border-gray-500/30'
+      return 'bg-slate-100 text-slate-600 border-slate-300'
     default:
-      return 'bg-gray-500/20 text-navy/60 border-gray-500/30'
+      return 'bg-slate-100 text-slate-600 border-slate-300'
   }
 }
 
@@ -311,12 +311,12 @@ onMounted(() => {
                 #{{ report.id }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-navy">{{ report.reporter.name }}</div>
-                <div class="text-xs text-navy/50">{{ report.reporter.email }}</div>
+                <div class="text-sm font-medium text-navy">{{ report.reporter?.name ?? '—' }}</div>
+                <div class="text-xs text-navy/50">{{ report.reporter?.email ?? 'Compte supprimé' }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-navy">{{ report.reportedUser.name }}</div>
-                <div class="text-xs text-navy/50">{{ report.reportedUser.email }}</div>
+                <div class="text-sm font-medium text-navy">{{ report.reportedUser?.name ?? '—' }}</div>
+                <div class="text-xs text-navy/50">{{ report.reportedUser?.email ?? 'Compte supprimé' }}</div>
               </td>
               <td class="px-6 py-4 max-w-xs">
                 <div class="text-sm text-navy/60 truncate">{{ report.reason }}</div>
@@ -339,7 +339,7 @@ onMounted(() => {
                 </button>
                 <button
                   @click="openStatusModal(report)"
-                  class="text-secondary hover:text-secondary/80 mr-3"
+                  class="text-navy/50 hover:text-navy mr-3"
                   title="Modifier le statut"
                 >
                   <Icon name="heroicons:pencil-square" class="w-5 h-5" />
@@ -400,15 +400,15 @@ onMounted(() => {
               <div>
                 <label class="text-xs text-navy/50 uppercase">Signalé par</label>
                 <div class="mt-1">
-                  <p class="text-navy font-medium">{{ selectedReport.reporter.name }}</p>
-                  <p class="text-sm text-navy/50">{{ selectedReport.reporter.email }}</p>
+                  <p class="text-navy font-medium">{{ selectedReport.reporter?.name ?? '—' }}</p>
+                  <p class="text-sm text-navy/50">{{ selectedReport.reporter?.email ?? 'Compte supprimé' }}</p>
                 </div>
               </div>
               <div>
                 <label class="text-xs text-navy/50 uppercase">Utilisateur signalé</label>
                 <div class="mt-1">
-                  <p class="text-navy font-medium">{{ selectedReport.reportedUser.name }}</p>
-                  <p class="text-sm text-navy/50">{{ selectedReport.reportedUser.email }}</p>
+                  <p class="text-navy font-medium">{{ selectedReport.reportedUser?.name ?? '—' }}</p>
+                  <p class="text-sm text-navy/50">{{ selectedReport.reportedUser?.email ?? 'Compte supprimé' }}</p>
                 </div>
               </div>
             </div>

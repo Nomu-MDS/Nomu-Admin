@@ -24,12 +24,23 @@ export default defineEventHandler(async (event) => {
 
     const url = `${config.apiBase}/admin/reports${params.toString() ? `?${params.toString()}` : ''}`
     
-    const response = await $fetch<ReportsResponse>(url, {
+    const raw = await $fetch<any>(url, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${session.token}`,
       },
     })
+
+    // Sequelize retourne les alias en PascalCase (Reporter, ReportedUser)
+    // On normalise en camelCase pour le frontend
+    const response: ReportsResponse = {
+      ...raw,
+      reports: (raw.reports ?? []).map((r: any) => ({
+        ...r,
+        reporter:     r.reporter     ?? r.Reporter     ?? null,
+        reportedUser: r.reportedUser ?? r.ReportedUser  ?? null,
+      })),
+    }
 
     return response
   } catch (error: any) {

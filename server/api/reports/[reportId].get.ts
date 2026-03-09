@@ -21,12 +21,18 @@ export default defineEventHandler(async (event) => {
 
   try {
     const config = useRuntimeConfig()
-    const response = await $fetch<Report>(`${config.apiBase}/admin/reports/${reportId}`, {
+    const raw = await $fetch<any>(`${config.apiBase}/admin/reports/${reportId}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${session.token}`,
       },
     })
+
+    const response: Report = {
+      ...raw,
+      reporter:     raw.reporter     ?? raw.Reporter     ?? null,
+      reportedUser: raw.reportedUser ?? raw.ReportedUser  ?? null,
+    }
 
     return response
   } catch (error: any) {
