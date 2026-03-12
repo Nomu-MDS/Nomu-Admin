@@ -24,6 +24,11 @@ const filters = ref<UserFilters>({
 const selectedUser = ref<User | null>(null)
 const showEditModal = ref(false)
 
+// Suppression
+const userToDelete = ref<User | null>(null)
+const showDeleteModal = ref(false)
+const deleting = ref(false)
+
 // Charger les utilisateurs
 async function loadUsers() {
   loading.value = true
@@ -110,6 +115,31 @@ async function updateUserRole(userId: number, newRole: 'user' | 'admin' | 'local
     await loadUsers()
   } catch (e: any) {
     alert(e.data?.message || 'Erreur lors de la modification du rôle')
+  }
+}
+
+// Supprimer un utilisateur
+function openDeleteModal(user: User) {
+  userToDelete.value = user
+  showDeleteModal.value = true
+}
+
+function closeDeleteModal() {
+  showDeleteModal.value = false
+  userToDelete.value = null
+}
+
+async function confirmDelete() {
+  if (!userToDelete.value || deleting.value) return
+  deleting.value = true
+  try {
+    await $fetch(`/api/users/${userToDelete.value.id}`, { method: 'DELETE' })
+    closeDeleteModal()
+    await loadUsers()
+  } catch (e: any) {
+    alert(e.data?.message || 'Erreur lors de la suppression')
+  } finally {
+    deleting.value = false
   }
 }
 
@@ -296,12 +326,19 @@ onMounted(() => {
                 <button
                   @click="toggleUserStatus(user)"
                   :class="[
-                    'transition-colors',
-                    user.is_active ? 'text-red-400 hover:text-red-300' : 'text-green-400 hover:text-green-300'
+                    'transition-colors mr-3',
+                    user.is_active ? 'text-orange-400 hover:text-orange-300' : 'text-green-400 hover:text-green-300'
                   ]"
                   :title="user.is_active ? 'Désactiver' : 'Activer'"
                 >
                   <Icon :name="user.is_active ? 'heroicons:no-symbol' : 'heroicons:check-circle'" class="w-5 h-5" />
+                </button>
+                <button
+                  @click="openDeleteModal(user)"
+                  class="text-red-400 hover:text-red-300 transition-colors"
+                  title="Supprimer définitivement"
+                >
+                  <Icon name="heroicons:trash" class="w-5 h-5" />
                 </button>
               </td>
             </tr>
@@ -330,6 +367,61 @@ onMounted(() => {
           >
             <Icon name="heroicons:chevron-right" class="w-4 h-4" />
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div v-if="showDeleteModal && userToDelete" class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-navy/50 backdrop-blur-sm" @click="closeDeleteModal"></div>
+
+        <div class="relative bg-card rounded-xl shadow-xl border border-red-500/30 p-6 max-w-md w-full">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-red-500/15 flex items-center justify-center shrink-0">
+              <Icon name="heroicons:exclamation-triangle" class="w-5 h-5 text-red-400" />
+            </div>
+            <h3 class="text-xl font-bold text-navy">Supprimer l'utilisateur</h3>
+          </div>
+
+          <div class="mb-6 space-y-3">
+            <div class="flex items-center gap-3 p-3 bg-navy/5 rounded-lg">
+              <img
+                :src="resolveAvatar(userToDelete.Profile?.image_url, userToDelete.id)"
+                :alt="userToDelete.name"
+                class="w-10 h-10 rounded-full object-cover border border-navy/20"
+              />
+              <div>
+                <p class="font-semibold text-navy text-sm">{{ userToDelete.name }}</p>
+                <p class="text-navy/50 text-xs">{{ userToDelete.email }}</p>
+              </div>
+            </div>
+
+            <p class="text-sm text-navy/70">Cette action est <strong class="text-red-400">irréversible</strong>. Elle supprimera :</p>
+            <ul class="text-sm text-navy/60 space-y-1 list-none">
+              <li class="flex items-center gap-2"><Icon name="heroicons:x-circle" class="w-4 h-4 text-red-400 shrink-0" />Profil, photo et index de recherche</li>
+              <li class="flex items-center gap-2"><Icon name="heroicons:x-circle" class="w-4 h-4 text-red-400 shrink-0" />Toutes les conversations et messages</li>
+              <li class="flex items-center gap-2"><Icon name="heroicons:x-circle" class="w-4 h-4 text-red-400 shrink-0" />Réservations, signalements et wallet</li>
+            </ul>
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              @click="closeDeleteModal"
+              :disabled="deleting"
+              class="flex-1 px-4 py-2 bg-navy/10 text-navy rounded-lg hover:bg-navy/20 transition-colors disabled:opacity-50"
+            >
+              Annuler
+            </button>
+            <button
+              @click="confirmDelete"
+              :disabled="deleting"
+              class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 font-medium"
+            >
+              <Icon v-if="deleting" name="svg-spinners:ring-resize" class="w-4 h-4 inline mr-2" />
+              {{ deleting ? 'Suppression…' : 'Supprimer définitivement' }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
