@@ -8,12 +8,5 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const config = useRuntimeConfig()
-
-  return $fetch<{ success: boolean; indexed: number }>(`${config.apiBase}/admin/reindex`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${session.token}`,
-    },
-  })
+  return apiFetch<{ success: boolean; indexed: number }>(event, '/admin/reindex', { method: 'POST' })
 })

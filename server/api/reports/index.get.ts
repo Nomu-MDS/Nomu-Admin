@@ -12,24 +12,14 @@ export default defineEventHandler(async (event) => {
 
   try {
     const query = getQuery(event) as ReportFilters
-    const config = useRuntimeConfig()
-    
-    // Construction des query params
-    const params = new URLSearchParams()
-    if (query.page) params.append('page', query.page.toString())
-    if (query.limit) params.append('limit', query.limit.toString())
-    if (query.status) params.append('status', query.status)
-    if (query.reportedUserId) params.append('reportedUserId', query.reportedUserId.toString())
-    if (query.reporterId) params.append('reporterId', query.reporterId.toString())
+    const params: Record<string, any> = {}
+    if (query.page) params.page = query.page
+    if (query.limit) params.limit = query.limit
+    if (query.status) params.status = query.status
+    if (query.reportedUserId) params.reportedUserId = query.reportedUserId
+    if (query.reporterId) params.reporterId = query.reporterId
 
-    const url = `${config.apiBase}/admin/reports${params.toString() ? `?${params.toString()}` : ''}`
-    
-    const raw = await $fetch<any>(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${session.token}`,
-      },
-    })
+    const raw = await apiFetch<any>(event, '/admin/reports', { query: params })
 
     // Sequelize retourne les alias en PascalCase (Reporter, ReportedUser)
     // On normalise en camelCase pour le frontend

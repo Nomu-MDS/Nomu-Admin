@@ -28,6 +28,7 @@ export default defineEventHandler(async (event) => {
         updatedAt: string
       }
       token: string
+      refreshToken: string
     }>(`${config.apiBase}/auth/login`, {
       method: 'POST',
       body: { email, password },
@@ -49,6 +50,7 @@ export default defineEventHandler(async (event) => {
         role: response.user.role,
       },
       token: response.token,
+      refreshToken: response.refreshToken,
     })
 
     return {

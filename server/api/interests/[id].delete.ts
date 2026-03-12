@@ -11,13 +11,7 @@ export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
 
   try {
-    const config = useRuntimeConfig()
-    const response = await $fetch(`${config.apiBase}/interests/admin/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${session.token}`,
-      },
-    })
+    const response = await apiFetch(event, `/interests/admin/${id}`, { method: 'DELETE' })
 
     return response
   } catch (error: any) {

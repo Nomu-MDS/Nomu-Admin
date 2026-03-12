@@ -11,14 +11,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
   try {
-    const config = useRuntimeConfig()
-    const response = await $fetch(`${config.apiBase}/interests/admin`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${session.token}`,
-      },
-      body,
-    })
+    const response = await apiFetch(event, '/interests/admin', { method: 'POST', body })
 
     return response
   } catch (error: any) {

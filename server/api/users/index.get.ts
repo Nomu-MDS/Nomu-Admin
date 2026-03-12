@@ -12,23 +12,13 @@ export default defineEventHandler(async (event) => {
 
   try {
     const query = getQuery(event) as UserFilters
-    const config = useRuntimeConfig()
-    
-    // Construction des query params
-    const params = new URLSearchParams()
-    if (query.page) params.append('page', query.page.toString())
-    if (query.role) params.append('role', query.role)
-    if (query.is_active) params.append('is_active', query.is_active)
-    if (query.search) params.append('search', query.search)
+    const params: Record<string, any> = {}
+    if (query.page) params.page = query.page
+    if (query.role) params.role = query.role
+    if (query.is_active) params.is_active = query.is_active
+    if (query.search) params.search = query.search
 
-    const url = `${config.apiBase}/admin/users${params.toString() ? `?${params.toString()}` : ''}`
-    
-    const response = await $fetch<UsersResponse>(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${session.token}`,
-      },
-    })
+    const response = await apiFetch<UsersResponse>(event, '/admin/users', { query: params })
 
     return response
   } catch (error: any) {

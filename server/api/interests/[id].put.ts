@@ -12,14 +12,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
   try {
-    const config = useRuntimeConfig()
-    const response = await $fetch(`${config.apiBase}/interests/admin/${id}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${session.token}`,
-      },
-      body,
-    })
+    const response = await apiFetch(event, `/interests/admin/${id}`, { method: 'PUT', body })
 
     return response
   } catch (error: any) {

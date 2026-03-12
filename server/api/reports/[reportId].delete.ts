@@ -18,13 +18,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const config = useRuntimeConfig()
-    const response = await $fetch(`${config.apiBase}/admin/reports/${reportId}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${session.token}`,
-      },
-    })
+    const response = await apiFetch(event, `/admin/reports/${reportId}`, { method: 'DELETE' })
 
     return response
   } catch (error: any) {
