@@ -37,14 +37,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const config = useRuntimeConfig()
-    const raw = await $fetch<any>(`${config.apiBase}/admin/reports/${reportId}`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${session.token}`,
-      },
-      body,
-    })
+    const raw = await apiFetch<any>(event, `/admin/reports/${reportId}`, { method: 'PATCH', body })
 
     const report = raw.report ?? raw
     return {

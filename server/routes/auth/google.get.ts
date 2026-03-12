@@ -12,6 +12,7 @@ export default defineOAuthGoogleEventHandler({
         is_active: boolean
       }
       token: string
+      refreshToken: string
     }>(`${config.apiBase}/auth/google/token`, {
       method: 'POST',
       body: { id_token: tokens.id_token },
@@ -37,6 +38,7 @@ export default defineOAuthGoogleEventHandler({
         role: response.user.role,
       },
       token: response.token,
+      refreshToken: response.refreshToken,
     })
 
     return sendRedirect(event, '/')
