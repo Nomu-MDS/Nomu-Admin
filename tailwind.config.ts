@@ -7,7 +7,7 @@ export default {
       colors: {
         navy: {
           DEFAULT: '#0E224A',
-          dark: '#07172e',
+          dark: '#465E8A',
           light: '#162d61',
         },
         blue: {
@@ -20,7 +20,7 @@ export default {
         // Aliases sémantiques
         background: '#E4DBCB',  // fond crème (page)
         card: '#FFFFFF',        // fond des panneaux/cards
-        sidebar: '#07172e',     // sidebar sombre
+        sidebar: '#465E8A',     // sidebar sombre
         primary: {
           DEFAULT: '#465E8A',
           50:  '#edf0f7',
