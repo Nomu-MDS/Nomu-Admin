@@ -18,7 +18,17 @@ export default defineEventHandler(async (event) => {
     if (query.is_active) params.is_active = query.is_active
     if (query.search) params.search = query.search
 
-    const response = await apiFetch<UsersResponse>(event, '/admin/users', { query: params })
+    const raw = await apiFetch<UsersResponse>(event, '/admin/users', { query: params })
+
+    // Sequelize peut retourner createdAt/updatedAt en camelCase selon la config du modèle
+    const response: UsersResponse = {
+      ...raw,
+      users: (raw.users ?? []).map((u: any) => ({
+        ...u,
+        created_at: u.created_at ?? u.createdAt ?? null,
+        updated_at: u.updated_at ?? u.updatedAt ?? null,
+      })),
+    }
 
     return response
   } catch (error: any) {

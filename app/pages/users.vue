@@ -376,7 +376,7 @@ onMounted(() => {
       <div class="flex items-center justify-center min-h-screen px-4">
         <div class="fixed inset-0 bg-navy/50 backdrop-blur-sm" @click="closeDeleteModal"></div>
 
-        <div class="relative bg-card rounded-xl shadow-xl border border-red-500/30 p-6 max-w-md w-full">
+        <div class="relative bg-card rounded-xl shadow-xl border border-red-500/30 p-6 max-w-lg w-full">
           <div class="flex items-center gap-3 mb-4">
             <div class="w-10 h-10 rounded-full bg-red-500/15 flex items-center justify-center shrink-0">
               <Icon name="heroicons:exclamation-triangle" class="w-5 h-5 text-red-400" />
